@@ -44,6 +44,7 @@ main(N) ->
 
   %% Spawn 'N' number of clients
   spawn_clients(1, N),
+  utils:generate_tweet_text(),
 
   %% Delete the ETS table from the storage
   ets:delete(userIdTable),
