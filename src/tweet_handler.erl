@@ -6,13 +6,14 @@
 %%% @end
 %%% Created : 23. Nov 2022 11:37 AM
 %%%-------------------------------------------------------------------
--module(tweet).
+-module(tweet_handler).
 -author("bhagyaraj").
+-include("record_structures.hrl").
 
 %% API
 -export([create_tweet/2]).
 -export([get_tweetUserId/1, get_tweetContent/1, get_tweetTime/1]).
--record (tweet, {timestamp, user_id, content}).
+
 
 % Create a tweet.
 create_tweet(User, Content) -> #tweet{timestamp = erlang:timestamp(), user_id = User, content = Content}.

@@ -6,17 +6,15 @@
 %%% @end
 %%% Created : 23. Nov 2022 11:37 AM
 %%%-------------------------------------------------------------------
--module(user_account).
+-module(account_handler).
 -author("bhagyaraj").
+-include("record_structures.hrl").
 
 %% API
 -export([create_account/1]).
 -export([get_id/1, get_following/1, get_followers/1]).
 -export([addFollowing/2, addFollower/2]).
 
-
-%% User account data structure.
--record (user, {id, following = [], followers = []}).
 
 %% Get the user's id
 get_id(User) -> User#user.id.

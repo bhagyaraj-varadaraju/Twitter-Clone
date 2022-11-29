@@ -8,6 +8,7 @@
 %%%-------------------------------------------------------------------
 -module(simulator).
 -author("bhagyaraj").
+-include("record_structures.hrl").
 
 %% API
 -export([main/1]).
@@ -19,7 +20,7 @@ spawn_clients(CurrentSpawnIndex, ClientCount) ->
   % Spawn the actor based on the algorithm and update its PID in the map
     CurrentSpawnIndex =< ClientCount ->
       UserId = CurrentSpawnIndex,
-      CurrentSpawnPID = spawn_link(node(), user_account, create_account, [UserId]),
+      CurrentSpawnPID = spawn_link(node(), account_handler, create_account, [UserId]),
 
       % Insert into the ETS table in the format {ActorIndex, ActorPID}
       ets:insert(userIdTable, {UserId, CurrentSpawnPID}),
