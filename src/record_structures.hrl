@@ -13,10 +13,10 @@
 -record (user, {id, following = [], followers = []}).
 
 %% Tweet data structure.
--record (tweet, {timestamp, user_id, content}).
+-record (tweet, {id, timestamp, user_id, content}).
 
 %% Performance stats data structure
--record (client_stats, {
+-record (perf_stats, {
   time = 0,
   total_tweets = 0,
   subscribed_tweets_query_count = 0,

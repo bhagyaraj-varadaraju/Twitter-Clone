@@ -10,7 +10,7 @@
 -author("bhagyaraj").
 
 %% API
--export([start_engine/0]).
+-export([start_engine/1]).
 -export([handleTweetButton/3, handleFollowButton/3]).
 
 %% Send tweet to the user's followers upon clicking tweet button
@@ -30,16 +30,24 @@ handleFollowButton(CallerPid, UserId, SubId) ->
   user_account:addFollower(SubId, UserId),
   CallerPid ! {followed_successfully, UserId, SubId}.
 
-listen_for_events() ->
+listen_for_events(CurrentIndex, TotalClients) ->
+  if
+    CurrentIndex > TotalClients -> done;
+    true ->
+      receive
+        {client_done} ->
+          listen_for_events(CurrentIndex + 1, TotalClients)
+      end
+  end.
 
-  done.
-
-start_engine() ->
+start_engine(N) ->
   %% Register current process
   register(?MODULE, self()),
 
   %% Listen to the users for distributing tweets and handling queries
-  listen_for_events(),
+  listen_for_events(1, N),
+
+  simulator ! {server_done},
 
   %% Unregister the current process
   erlang:unregister(?MODULE).

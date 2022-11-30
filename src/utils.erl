@@ -10,7 +10,7 @@
 -author("bhagyaraj").
 
 %% API
--export([get_random_string/1,generate_tweet_text/0, keys/1]).
+-export([generate_tweet_text/0]).
 
 keys(TableName) ->
   FirstKey = ets:first(TableName),
@@ -29,6 +29,7 @@ generate_random_string(Count, Characters) ->
     ++ Acc
               end, [], lists:seq(1, Count)).
 
+get_random_string(L) -> generate_random_string(L,"abcdefghijklmnopqrstuvwxyz1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZ").
 
 %% This generates 4 kinds of tweet texts including or excluding the hashtags and mentions
 generate_tweet_text() ->
@@ -36,11 +37,11 @@ generate_tweet_text() ->
   Hashtags = ["UF","LibraryWest","COP5725","Dosp","Erlang"],
   userIdTable,
   TweetText = case Temp of
-    1 -> get_random_string(60);
-    2-> lists:concat(["@","usr",lists:nth(rand:uniform(length(keys(userIdTable))),keys(userIdTable))," ",get_random_string(40)]);
-    3-> lists:concat(["#",lists:nth(rand:uniform(length(Hashtags)),Hashtags)," ",get_random_string(40)]);
-    4-> lists:concat(["@","usr",lists:nth(rand:uniform(length(keys(userIdTable))),keys(userIdTable))," #",lists:nth(rand:uniform(length(Hashtags)),Hashtags)," ",get_random_string(30)])
+    1 -> get_random_string(80);
+    2-> lists:concat([get_random_string(80), " ", "@", "usr", lists:nth(rand:uniform(length(keys(userTable))), keys(userTable))]);
+    3-> lists:concat([get_random_string(80), " ", "#", lists:nth(rand:uniform(length(Hashtags)), Hashtags)]);
+    4-> lists:concat([get_random_string(80), " ", "@", "usr", lists:nth(rand:uniform(length(keys(userTable))), keys(userTable)),
+      " #", lists:nth(rand:uniform(length(Hashtags)), Hashtags)])
   end,
   TweetText.
 
-get_random_string(L) -> generate_random_string(L,"abcdefghijklmnopqrstuvwxyz1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZ").

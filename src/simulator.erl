@@ -17,16 +17,15 @@
 %% Spawns the N client users and assigns them unique UserIds
 spawn_clients(CurrentSpawnIndex, ClientCount) ->
   if
-  % Spawn the actor based on the algorithm and update its PID in the map
+  %% Spawn the actors
     CurrentSpawnIndex =< ClientCount ->
-      UserId = CurrentSpawnIndex,
-      CurrentSpawnPID = spawn_link(node(), account_handler, create_account, [UserId]),
+      %% Generate the UserId for the current user
+      UserId = "usr" ++ integer_to_list(CurrentSpawnIndex),
 
-      % Insert into the ETS table in the format {ActorIndex, ActorPID}
-      ets:insert(userIdTable, {UserId, CurrentSpawnPID}),
+      spawn_link(node(), account_handler, start_user, [CurrentSpawnIndex, UserId, ClientCount]),
       spawn_clients(CurrentSpawnIndex + 1, ClientCount);
 
-  % Return after all the spawns are done
+  %% Return after all the spawns are done
     true ->
       io:format("All ~p clients have been spawned~n", [ClientCount])
   end.
@@ -36,18 +35,27 @@ main(N) ->
   %% Register current process
   register(?MODULE, self()),
 
-  %% Create an ETS table 'userIdTable' for storing {UserId, PID}
-  ets:new(userIdTable, [set, named_table, protected]),
+  %% Create an ETS table 'userTable' for storing {Index, <user record>, UserPID}
+  ets:new(userTable, [set, named_table, public]),
+
+  %% Create an ETS table 'tweetTable' for storing {<tweet record>}
+  ets:new(tweetTable, [set, named_table, public]),
 
   %% Spawn the server engine
-  spawn_link(node(), server, start_engine, []),
+  spawn_link(node(), server, start_engine, [N]),
 
   %% Spawn 'N' number of clients
   spawn_clients(1, N),
   utils:generate_tweet_text(),
 
-  %% Delete the ETS table from the storage
-  ets:delete(userIdTable),
+  %% Delete the ETS tables from the storage
+  ets:delete(userTable),
+  ets:delete(tweetTable),
+
+  receive
+    {server_done} ->
+      done
+  end,
 
   %% Unregister the current process
   erlang:unregister(?MODULE).

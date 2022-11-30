@@ -11,9 +11,11 @@
 -include("record_structures.hrl").
 
 %% API
--export([create_account/1]).
+-export([start_user/3]).
 -export([get_id/1, get_following/1, get_followers/1]).
 -export([addFollowing/2, addFollower/2]).
+
+-define(MAX_TWEETS, 100).
 
 
 %% Get the user's id
@@ -37,5 +39,23 @@ addFollower(User, Follower) ->
   Updated_list  = [Follower] ++ Current_list,
   User#user{followers = Updated_list}.
 
-%% Create a new account
-create_account(UserId) -> #user{id = UserId}.
+%% Handle user process
+start_user(MyIndex, UserId, _N) ->
+  %% Sign up the client using UserID
+  MyUserRecord = #user{id = UserId},
+
+  %% Create a stats data structure
+  _ClientStats = #perf_stats{},
+
+  %% Insert into the ETS table in the format {ActorIndex, UserId, ActorPID}
+  ets:insert(userTable, {MyIndex, MyUserRecord, self()}),
+
+  %% Send tweet and insert into tweet table
+  Tweet_content = utils:generate_tweet_text(),
+  NewTweetRecord = tweet_handler:create_tweet(MyUserRecord#user.id, Tweet_content),
+  ets:insert(tweetTable, {NewTweetRecord}),
+  io:format("New Tweet [~p] ~n", [Tweet_content]),
+
+  server ! {client_done}.
+
+
