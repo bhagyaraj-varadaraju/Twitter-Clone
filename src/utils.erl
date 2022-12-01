@@ -35,12 +35,12 @@ get_random_string(L) -> generate_random_string(L,"abcdefghijklmnopqrstuvwxyz1234
 generate_tweet_text() ->
   Temp = rand:uniform(4),
   Hashtags = ["UF","LibraryWest","COP5725","Dosp","Erlang"],
-  userIdTable,
+
   TweetText = case Temp of
     1 -> get_random_string(80);
-    2-> lists:concat([get_random_string(80), " ", "@", "usr", lists:nth(rand:uniform(length(keys(userTable))), keys(userTable))]);
+    2-> lists:concat([get_random_string(80), " ", "@", lists:nth(rand:uniform(length(keys(userTable))), keys(userTable))]);
     3-> lists:concat([get_random_string(80), " ", "#", lists:nth(rand:uniform(length(Hashtags)), Hashtags)]);
-    4-> lists:concat([get_random_string(80), " ", "@", "usr", lists:nth(rand:uniform(length(keys(userTable))), keys(userTable)),
+    4-> lists:concat([get_random_string(80), " ", "@", lists:nth(rand:uniform(length(keys(userTable))), keys(userTable)),
       " #", lists:nth(rand:uniform(length(Hashtags)), Hashtags)])
   end,
   TweetText.

@@ -10,11 +10,7 @@
 -author("bhagyaraj").
 
 %% API
--export([registerUser/0]).
+-export([]).
 
-%% Create user id for the new user
-registerUser() ->
-%%  Id = getId(),
-%%  user_account:create_account(Id).
-done.
+
 
