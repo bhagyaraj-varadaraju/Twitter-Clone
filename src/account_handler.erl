@@ -38,4 +38,11 @@ start_user(MyIndex, UserId, _N) ->
 %%  server ! {search_mention, },
 
   %% Send the completed message to the server
+  TweetsReturned = query_handler:search_mention(UserId),
+  lists:foreach(fun(X) -> io:format("[~p] - ~p ~n", [UserId, X]) end, TweetsReturned),
+
+%%  Hashtags = ets:select(hashtagTable, [{{'$1'}, [], ['$1']}]),
+%%  TweetsWithHashtag = query_handler:search_hashtag(lists:nth(rand:uniform(length(Hashtags)), Hashtags)),
+%%  lists:foreach(fun(X) -> io:format("[~p] - ~p ~n", UserId, X) end, TweetsWithHashtag),
+
   server ! {client_done}.

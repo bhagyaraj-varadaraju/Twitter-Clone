@@ -4,13 +4,21 @@
 %%% @doc
 %%%
 %%% @end
-%%% Created : 23. Nov 2022 11:43 AM
+%%% Created : 23. Nov 2022 11:43 AM.
 %%%-------------------------------------------------------------------
 -module(utils).
 -author("bhagyaraj").
 
 %% API
--export([generate_tweet_text/0]).
+-export([populate_hashtag_table/0, generate_tweet_text/0]).
+
+populate_hashtag_table() ->
+  ets:insert(hashtagTable, {"UFL"}),
+  ets:insert(hashtagTable, {"DOSP"}),
+  ets:insert(hashtagTable, {"COP5615"}),
+  ets:insert(hashtagTable, {"GoGators"}),
+  ets:insert(hashtagTable, {"Herbert"}),
+  ets:insert(hashtagTable, {"Erlang"}).
 
 keys(TableName) ->
   FirstKey = ets:first(TableName),
@@ -29,13 +37,12 @@ generate_random_string(Count, Characters) ->
     ++ Acc
               end, [], lists:seq(1, Count)).
 
-get_random_string(L) -> generate_random_string(L,"abcdefghijklmnopqrstuvwxyz1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZ").
+get_random_string(L) -> generate_random_string(L, "abcdefghijklmnopqrstuvwxyz1234567890 ABCDEFGHIJKLMNOPQRSTUVWXYZ").
 
 %% This generates 4 kinds of tweet texts including or excluding the hashtags and mentions
 generate_tweet_text() ->
   Temp = rand:uniform(4),
-  Hashtags = ["UF","LibraryWest","COP5725","Dosp","Erlang"],
-
+  Hashtags = ets:select(hashtagTable, [{{'$1'}, [], ['$1']}]),
   TweetText = case Temp of
     1 -> get_random_string(80);
     2-> lists:concat([get_random_string(80), " ", "@", lists:nth(rand:uniform(length(keys(userTable))), keys(userTable))]);

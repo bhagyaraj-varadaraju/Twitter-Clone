@@ -41,6 +41,9 @@ main(N) ->
   %% Create an ETS table 'tweetTable' for storing tweets
   ets:new(tweetTable, [ordered_set, named_table, public]),
 
+  %% Create an ETS table 'hashtagTable' for allowed hashtags
+  ets:new(hashtagTable,[set,named_table]),
+  utils:populate_hashtag_table(),
 
   %% Spawn the server engine
   spawn_link(node(), server, start_engine, [N]),
@@ -48,7 +51,7 @@ main(N) ->
   %% Spawn 'N' number of clients
   spawn_clients(1, N),
 
-  %% Wait for the server to complete
+  %% Wait for the server to complete listening
   receive
     {server_done} ->
       done
@@ -57,6 +60,7 @@ main(N) ->
   %% Delete the ETS tables from the storage
   ets:delete(userTable),
   ets:delete(tweetTable),
+  ets:delete(hashtagTable),
 
   %% Unregister the current process
   erlang:unregister(?MODULE).
