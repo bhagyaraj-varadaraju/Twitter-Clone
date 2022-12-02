@@ -18,7 +18,8 @@
 send_requests(UserId, RequestList, CurrentRequest, MaxRequests, N) ->
   if
     CurrentRequest > MaxRequests ->
-      io:format("User ~p successfully completed ~p operations~n", [UserId, MaxRequests]);
+      %% io:format("User ~p successfully completed ~p operations~n", [UserId, MaxRequests]);
+      done;
     true ->
       receive
         {receive_tweet, _TweetId, _SenderUserId, _TweetContent} ->
