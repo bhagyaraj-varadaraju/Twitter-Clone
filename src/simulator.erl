@@ -39,10 +39,10 @@ main(N) ->
   ets:new(userTable, [set, named_table, public, {keypos, 2}]),
 
   %% Create an ETS table 'tweetTable' for storing tweets
-  ets:new(tweetTable, [ordered_set, named_table, public]),
+  ets:new(tweetTable, [set, named_table, public]),
 
   %% Create an ETS table 'hashtagTable' for allowed hashtags
-  ets:new(hashtagTable,[set,named_table]),
+  ets:new(hashtagTable,[set, named_table, public]),
   utils:populate_hashtag_table(),
 
   %% Spawn the server engine
@@ -53,8 +53,20 @@ main(N) ->
 
   %% Wait for the server to complete listening
   receive
-    {server_done} ->
-      done
+    {server_done, StatsAtExit} ->
+      io:format("Server Teminated with Stats,
+       Time = ~p ms,
+       Tweets made = ~p,
+       Subscriptions handled = ~p,
+       Retweets done = ~p,
+       Hashtag searches  = ~p,
+       My mention searches = ~p~n",
+            [StatsAtExit#perf_stats.time,
+              StatsAtExit#perf_stats.total_tweets,
+              StatsAtExit#perf_stats.total_subscriptions,
+              StatsAtExit#perf_stats.total_retweets,
+              StatsAtExit#perf_stats.hashtag_query_count,
+              StatsAtExit#perf_stats.mention_query_count])
   end,
 
   %% Delete the ETS tables from the storage

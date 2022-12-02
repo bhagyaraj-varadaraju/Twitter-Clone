@@ -10,7 +10,8 @@
 -author("bhagyaraj").
 
 %% API
--export([populate_hashtag_table/0, generate_tweet_text/0]).
+-export([populate_hashtag_table/0, generate_tweet_text/0, get_random_element/1]).
+
 
 populate_hashtag_table() ->
   ets:insert(hashtagTable, {"UFL"}),
@@ -52,3 +53,12 @@ generate_tweet_text() ->
   end,
   TweetText.
 
+get_random_element(Array) ->
+  ArrayLen = length(Array),
+  if
+    ArrayLen /= 0 ->
+      RandomElement = lists:nth(rand:uniform(ArrayLen), Array),
+      RandomElement;
+    true ->
+      empty_array
+  end.
